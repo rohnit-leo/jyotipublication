@@ -1,6 +1,5 @@
 "use client"
 
-import { notFound } from "next/navigation"
 import { Card, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
@@ -18,22 +17,13 @@ import {
 } from "lucide-react"
 import { AnnouncementBar } from "@/components/announcement-bar"
 import { WhatsAppFloat } from "@/components/whatsapp-float"
-import { getBookBySlug } from "@/lib/books-data"
+import type { Book } from "@/lib/books-data"
 
-interface BookPageProps {
-  params: {
-    slug: string
-  }
+interface BookDetailPageClientProps {
+  book: Book
 }
 
-export default function BookDetailPageClient({ params }: BookPageProps) {
-  // Get book data directly - no need for useState/useEffect since we're using static generation
-  const book = getBookBySlug(params.slug)
-
-  if (!book) {
-    notFound()
-  }
-
+export default function BookDetailPageClient({ book }: BookDetailPageClientProps) {
   const handleBuyNow = () => {
     const message = `Hi! I'm interested in "${book.name}" for ${book.university} ${book.course} entrance exam, priced at ₹${book.price}. Please provide more details and confirm availability.`
     window.open(`https://wa.me/919914632817?text=${encodeURIComponent(message)}`, "_blank")

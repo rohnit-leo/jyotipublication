@@ -1,28 +1,18 @@
 "use client"
 
-import { notFound } from "next/navigation"
 import { Card, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Star, ShoppingCart, BookOpen, Users, Award, CheckCircle, Package } from "lucide-react"
 import { AnnouncementBar } from "@/components/announcement-bar"
 import { WhatsAppFloat } from "@/components/whatsapp-float"
-import { getComboBySlug } from "@/lib/combo-data"
+import type { Combo } from "@/lib/combo-data"
 
-interface ComboPageProps {
-  params: {
-    slug: string
-  }
+interface ComboDetailPageClientProps {
+  combo: Combo
 }
 
-export default function ComboDetailPageClient({ params }: ComboPageProps) {
-  // Get combo data directly - no need for useState/useEffect since we're using static generation
-  const combo = getComboBySlug(params.slug)
-
-  if (!combo) {
-    notFound()
-  }
-
+export default function ComboDetailPageClient({ combo }: ComboDetailPageClientProps) {
   const handleBuyNow = () => {
     const booksList = combo.books.map((book: any) => `• ${book.name}`).join("\n")
     const message = `Hi! I'm interested in the "${combo.name}" priced at ₹${combo.comboPrice} (Save ₹${combo.savings}!).

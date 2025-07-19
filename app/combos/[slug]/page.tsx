@@ -36,14 +36,15 @@ export async function generateStaticParams() {
 
 // The main page component
 export default function ComboDetailPage({ params }: ComboPageProps) {
-  // Check if combo exists before rendering
+  // Fetch the combo data on the server side
   const combo = getComboBySlug(params.slug)
 
   if (!combo) {
     notFound()
   }
 
-  return <ComboDetailPageClient params={params} />
+  // Pass the combo data as props to the client component
+  return <ComboDetailPageClient combo={combo} />
 }
 
 // Force static generation

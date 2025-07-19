@@ -36,14 +36,15 @@ export async function generateStaticParams() {
 
 // The main page component
 export default function BookDetailPage({ params }: BookPageProps) {
-  // Check if book exists before rendering
+  // Fetch the book data on the server side
   const book = getBookBySlug(params.slug)
 
   if (!book) {
     notFound()
   }
 
-  return <BookDetailPageClient params={params} />
+  // Pass the book data as props to the client component
+  return <BookDetailPageClient book={book} />
 }
 
 // Force static generation
