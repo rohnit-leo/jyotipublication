@@ -92,7 +92,7 @@ Please provide more details and confirm availability.`
               <div className="flex items-center space-x-4 mb-4">
                 <span className="text-3xl font-bold text-green-600">₹{combo.comboPrice}</span>
                 <span className="text-xl text-gray-500 line-through">₹{combo.originalPrice}</span>
-                <Badge variant="secondary" className="text-sm">
+                <Badge variant="secondary" className="text-sm bg-orange-100 text-orange-700">
                   {discountPercentage}% OFF
                 </Badge>
               </div>
@@ -101,14 +101,20 @@ Please provide more details and confirm availability.`
             </div>
 
             {/* Short Description */}
-            <div>
-              <h3 className="text-lg font-semibold text-gray-900 mb-3">About This Combo</h3>
+            <div className="bg-white rounded-lg p-6 shadow-sm border">
+              <h3 className="text-lg font-semibold text-gray-900 mb-3 flex items-center">
+                <BookOpen className="h-5 w-5 mr-2 text-blue-600" />
+                About This Combo
+              </h3>
               <p className="text-gray-700 leading-relaxed">{combo.shortDescription}</p>
             </div>
 
             {/* Key Features */}
-            <div>
-              <h3 className="text-lg font-semibold text-gray-900 mb-3">Key Features</h3>
+            <div className="bg-white rounded-lg p-6 shadow-sm border">
+              <h3 className="text-lg font-semibold text-gray-900 mb-3 flex items-center">
+                <CheckCircle className="h-5 w-5 mr-2 text-purple-600" />
+                Key Features
+              </h3>
               <div className="grid md:grid-cols-2 gap-3">
                 {combo.features.map((feature: string, index: number) => (
                   <div key={index} className="flex items-center space-x-2">
@@ -130,7 +136,7 @@ Please provide more details and confirm availability.`
                 onClick={handleEnquiry}
                 variant="outline"
                 size="lg"
-                className="w-full text-lg py-6 bg-transparent"
+                className="w-full text-lg py-6 border-2 border-blue-600 text-blue-600 hover:bg-blue-600 hover:text-white bg-transparent"
               >
                 <Users className="mr-3 h-5 w-5" />
                 Ask Questions / Get Help
@@ -159,9 +165,12 @@ Please provide more details and confirm availability.`
         </div>
 
         {/* Books Included */}
-        <Card className="mb-12">
+        <Card className="mb-12 bg-white shadow-lg">
           <CardContent className="p-8">
-            <h2 className="text-2xl font-bold text-gray-900 mb-6">Books Included in This Combo</h2>
+            <h2 className="text-2xl font-bold text-gray-900 mb-6 flex items-center">
+              <Package className="h-6 w-6 mr-3 text-blue-600" />
+              Books Included in This Combo
+            </h2>
             <div className="grid md:grid-cols-2 gap-6">
               {combo.books.map((book: any, index: number) => (
                 <div key={index} className="flex items-start space-x-4 p-4 bg-gray-50 rounded-lg">
@@ -201,9 +210,12 @@ Please provide more details and confirm availability.`
         </Card>
 
         {/* Detailed Description */}
-        <Card className="mb-12">
+        <Card className="mb-12 bg-white shadow-lg">
           <CardContent className="p-8">
-            <h2 className="text-2xl font-bold text-gray-900 mb-6">Detailed Description</h2>
+            <h2 className="text-2xl font-bold text-gray-900 mb-6 flex items-center">
+              <BookOpen className="h-6 w-6 mr-3 text-purple-600" />
+              Detailed Description
+            </h2>
             <div className="prose max-w-none">
               <div className="text-gray-700 leading-relaxed whitespace-pre-line">{combo.longDescription}</div>
             </div>
@@ -211,19 +223,24 @@ Please provide more details and confirm availability.`
         </Card>
 
         {/* Call to Action */}
-        <Card className="bg-gradient-to-r from-blue-50 to-purple-50 border-blue-200">
+        <Card className="bg-blue-600 text-white shadow-lg">
           <CardContent className="p-8 text-center">
-            <h2 className="text-2xl font-bold text-gray-900 mb-4">Ready to Start Your {combo.course} Journey?</h2>
-            <p className="text-gray-700 mb-6 max-w-2xl mx-auto">
+            <h2 className="text-2xl font-bold mb-4">Ready to Start Your {combo.course} Journey?</h2>
+            <p className="text-blue-100 mb-6 max-w-2xl mx-auto">
               Get this complete study package with {combo.totalBooks} books and save ₹{combo.savings}. Everything you
               need for {combo.course} success in one convenient package!
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Button onClick={handleBuyNow} size="lg" className="bg-green-600 hover:bg-green-700">
+              <Button onClick={handleBuyNow} size="lg" className="bg-white text-blue-600 hover:bg-gray-100">
                 <ShoppingCart className="mr-2 h-5 w-5" />
                 Order Complete Combo - ₹{combo.comboPrice}
               </Button>
-              <Button onClick={handleEnquiry} variant="outline" size="lg" className="bg-transparent">
+              <Button
+                onClick={handleEnquiry}
+                variant="outline"
+                size="lg"
+                className="border-2 border-white text-white hover:bg-white hover:text-blue-600 bg-transparent"
+              >
                 <Users className="mr-2 h-5 w-5" />
                 Need Help? Contact Us
               </Button>
