@@ -19,7 +19,6 @@ import {
 import { AnnouncementBar } from "@/components/announcement-bar"
 import { WhatsAppFloat } from "@/components/whatsapp-float"
 import { getBookBySlug } from "@/lib/books-data"
-import { useEffect, useState } from "react"
 
 interface BookPageProps {
   params: {
@@ -28,26 +27,8 @@ interface BookPageProps {
 }
 
 export default function BookDetailPageClient({ params }: BookPageProps) {
-  const [book, setBook] = useState<any>(null)
-  const [loading, setLoading] = useState(true)
-
-  useEffect(() => {
-    // Get book data on client side to ensure it works after deployment
-    const bookData = getBookBySlug(params.slug)
-    setBook(bookData)
-    setLoading(false)
-  }, [params.slug])
-
-  if (loading) {
-    return (
-      <div className="min-h-screen bg-gradient-to-br from-blue-50 via-purple-50 to-pink-50 flex items-center justify-center">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
-          <p className="text-gray-600">Loading book details...</p>
-        </div>
-      </div>
-    )
-  }
+  // Get book data directly - no need for useState/useEffect since we're using static generation
+  const book = getBookBySlug(params.slug)
 
   if (!book) {
     notFound()
@@ -156,7 +137,7 @@ export default function BookDetailPageClient({ params }: BookPageProps) {
                 Key Features
               </h3>
               <div className="grid md:grid-cols-2 gap-3">
-                {book.features.map((feature: string, index: number) => (
+                {book.features.map((feature, index) => (
                   <div key={index} className="flex items-center space-x-2">
                     <CheckCircle className="h-4 w-4 text-green-600 flex-shrink-0" />
                     <span className="text-sm text-gray-700">{feature}</span>
@@ -232,7 +213,7 @@ export default function BookDetailPageClient({ params }: BookPageProps) {
                 Table of Contents
               </h2>
               <div className="grid md:grid-cols-2 gap-4">
-                {book.tableOfContents.map((chapter: string, index: number) => (
+                {book.tableOfContents.map((chapter, index) => (
                   <div
                     key={index}
                     className="flex items-center space-x-3 p-3 bg-gradient-to-r from-blue-50 to-purple-50 rounded-lg"
@@ -256,7 +237,7 @@ export default function BookDetailPageClient({ params }: BookPageProps) {
                   Key Highlights
                 </h2>
                 <div className="space-y-4">
-                  {book.keyHighlights.map((highlight: string, index: number) => (
+                  {book.keyHighlights.map((highlight, index) => (
                     <div key={index} className="flex items-start space-x-3">
                       <div className="bg-green-100 rounded-full p-1 mt-1">
                         <CheckCircle className="h-4 w-4 text-green-600" />
@@ -275,7 +256,7 @@ export default function BookDetailPageClient({ params }: BookPageProps) {
                   Target Audience
                 </h2>
                 <div className="space-y-4">
-                  {book.targetAudience.map((audience: string, index: number) => (
+                  {book.targetAudience.map((audience, index) => (
                     <div key={index} className="flex items-start space-x-3">
                       <div className="bg-orange-100 rounded-full p-1 mt-1">
                         <GraduationCap className="h-4 w-4 text-orange-600" />

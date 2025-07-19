@@ -8,7 +8,6 @@ import { Star, ShoppingCart, BookOpen, Users, Award, CheckCircle, Package } from
 import { AnnouncementBar } from "@/components/announcement-bar"
 import { WhatsAppFloat } from "@/components/whatsapp-float"
 import { getComboBySlug } from "@/lib/combo-data"
-import { useEffect, useState } from "react"
 
 interface ComboPageProps {
   params: {
@@ -17,26 +16,8 @@ interface ComboPageProps {
 }
 
 export default function ComboDetailPageClient({ params }: ComboPageProps) {
-  const [combo, setCombo] = useState<any>(null)
-  const [loading, setLoading] = useState(true)
-
-  useEffect(() => {
-    // Get combo data on client side to ensure it works after deployment
-    const comboData = getComboBySlug(params.slug)
-    setCombo(comboData)
-    setLoading(false)
-  }, [params.slug])
-
-  if (loading) {
-    return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
-          <p className="text-gray-600">Loading combo details...</p>
-        </div>
-      </div>
-    )
-  }
+  // Get combo data directly - no need for useState/useEffect since we're using static generation
+  const combo = getComboBySlug(params.slug)
 
   if (!combo) {
     notFound()
