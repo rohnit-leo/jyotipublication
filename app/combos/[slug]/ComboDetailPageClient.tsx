@@ -8,6 +8,7 @@ import { Star, ShoppingCart, BookOpen, Users, Award, CheckCircle, Package } from
 import { AnnouncementBar } from "@/components/announcement-bar"
 import { WhatsAppFloat } from "@/components/whatsapp-float"
 import { getComboBySlug } from "@/lib/combo-data"
+import { useEffect, useState } from "react"
 
 interface ComboPageProps {
   params: {
@@ -16,14 +17,33 @@ interface ComboPageProps {
 }
 
 export default function ComboDetailPageClient({ params }: ComboPageProps) {
-  const combo = getComboBySlug(params.slug)
+  const [combo, setCombo] = useState<any>(null)
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    // Get combo data on client side to ensure it works after deployment
+    const comboData = getComboBySlug(params.slug)
+    setCombo(comboData)
+    setLoading(false)
+  }, [params.slug])
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
+          <p className="text-gray-600">Loading combo details...</p>
+        </div>
+      </div>
+    )
+  }
 
   if (!combo) {
     notFound()
   }
 
   const handleBuyNow = () => {
-    const booksList = combo.books.map((book) => `• ${book.name}`).join("\n")
+    const booksList = combo.books.map((book: any) => `• ${book.name}`).join("\n")
     const message = `Hi! I'm interested in the "${combo.name}" priced at ₹${combo.comboPrice} (Save ₹${combo.savings}!).
 
 This combo includes ${combo.totalBooks} books:
@@ -55,7 +75,7 @@ Please provide more details and confirm availability.`
           <div className="space-y-4">
             <div className="relative bg-white rounded-lg shadow-lg p-8">
               <img
-                src={combo.image || "/placeholder.svg"}
+                src={combo.image || "/placeholder.svg?height=400&width=300"}
                 alt={combo.name}
                 className="w-full max-w-lg mx-auto h-auto object-contain"
                 style={{ minHeight: "400px" }}
@@ -119,7 +139,7 @@ Please provide more details and confirm availability.`
             <div>
               <h3 className="text-lg font-semibold text-gray-900 mb-3">Key Features</h3>
               <div className="grid md:grid-cols-2 gap-3">
-                {combo.features.map((feature, index) => (
+                {combo.features.map((feature: string, index: number) => (
                   <div key={index} className="flex items-center space-x-2">
                     <CheckCircle className="h-4 w-4 text-green-600 flex-shrink-0" />
                     <span className="text-sm text-gray-700">{feature}</span>
@@ -172,7 +192,7 @@ Please provide more details and confirm availability.`
           <CardContent className="p-8">
             <h2 className="text-2xl font-bold text-gray-900 mb-6">Books Included in This Combo</h2>
             <div className="grid md:grid-cols-2 gap-6">
-              {combo.books.map((book, index) => (
+              {combo.books.map((book: any, index: number) => (
                 <div key={index} className="flex items-start space-x-4 p-4 bg-gray-50 rounded-lg">
                   <div className="bg-blue-100 rounded-full p-2 flex-shrink-0">
                     <BookOpen className="h-5 w-5 text-blue-600" />
