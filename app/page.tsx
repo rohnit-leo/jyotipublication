@@ -1,11 +1,11 @@
-import { AnnouncementBar } from "@/components/announcement-bar"
 import { HeroSection } from "@/components/hero-section"
-import { StatsSection } from "@/components/stats-section"
-import { CategoryGrid } from "@/components/category-grid"
+import { AnnouncementBar } from "@/components/announcement-bar"
 import { FeaturedCombos } from "@/components/featured-combos"
-import { ProcessSection } from "@/components/process-section"
-import { TestimonialsSection } from "@/components/testimonials-section"
 import { WhatsAppFloat } from "@/components/whatsapp-float"
+import { CategoryGrid } from "@/components/category-grid"
+import { TestimonialsSection } from "@/components/testimonials-section"
+import { StatsSection } from "@/components/stats-section"
+import { ProcessSection } from "@/components/process-section"
 
 export default function HomePage() {
   return (
@@ -14,8 +14,8 @@ export default function HomePage() {
       <HeroSection />
       <StatsSection />
       <CategoryGrid />
-      <FeaturedCombos />
       <ProcessSection />
+      <FeaturedCombos />
       <TestimonialsSection />
       <WhatsAppFloat />
     </div>

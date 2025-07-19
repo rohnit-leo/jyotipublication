@@ -1,20 +1,7 @@
+import type { Metadata } from "next"
 import { notFound } from "next/navigation"
-import { getComboBySlug, getAllCombos } from "@/lib/combo-data"
 import ComboDetailPageClient from "./ComboDetailPageClient"
-import { generateComboMetadata } from "./metadata"
-
-export const dynamic = "force-static"
-
-export async function generateStaticParams() {
-  const combos = getAllCombos()
-  return combos.map((combo) => ({
-    slug: combo.slug,
-  }))
-}
-
-export async function generateMetadata({ params }: { params: { slug: string } }) {
-  return generateComboMetadata(params.slug)
-}
+import { combosData, getComboBySlug } from "@/lib/combo-data"
 
 interface ComboPageProps {
   params: {
@@ -22,12 +9,43 @@ interface ComboPageProps {
   }
 }
 
-export default function ComboPage({ params }: ComboPageProps) {
+// This function generates the metadata for each combo page
+export async function generateMetadata({ params }: ComboPageProps): Promise<Metadata> {
+  const combo = getComboBySlug(params.slug)
+
+  if (!combo) {
+    return {
+      title: "Combo Not Found | Jyoti Publication",
+    }
+  }
+
+  return {
+    title: `${combo.name} - Save ₹${combo.savings} | Jyoti Publication`,
+    description: combo.shortDescription,
+    keywords: `${combo.course}, combo package, ${combo.name}, Jyoti Publication, save money, study package`,
+  }
+}
+
+// This function tells Next.js which dynamic routes to pre-render at build time
+export async function generateStaticParams() {
+  // Generate params for all combos
+  return combosData.map((combo) => ({
+    slug: combo.slug,
+  }))
+}
+
+// The main page component
+export default function ComboDetailPage({ params }: ComboPageProps) {
+  // Check if combo exists before rendering
   const combo = getComboBySlug(params.slug)
 
   if (!combo) {
     notFound()
   }
 
-  return <ComboDetailPageClient combo={combo} />
+  return <ComboDetailPageClient params={params} />
 }
+
+// Force static generation
+export const dynamic = "force-static"
+export const revalidate = false

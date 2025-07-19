@@ -24,8 +24,11 @@ export function AnnouncementBar() {
   }, [])
 
   return (
-    <div className="bg-blue-600 text-white py-3 overflow-hidden relative">
-      <div className="text-center font-semibold text-sm md:text-base px-4">{announcements[currentIndex]}</div>
+    <div className="bg-gradient-to-r from-blue-600 via-purple-600 to-blue-800 text-white py-3 overflow-hidden relative">
+      <div className="animate-pulse text-center font-semibold text-sm md:text-base px-4">
+        {announcements[currentIndex]}
+      </div>
+      <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent animate-shimmer"></div>
     </div>
   )
 }

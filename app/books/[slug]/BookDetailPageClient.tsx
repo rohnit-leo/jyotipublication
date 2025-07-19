@@ -1,5 +1,6 @@
 "use client"
 
+import { notFound } from "next/navigation"
 import { Card, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
@@ -17,13 +18,22 @@ import {
 } from "lucide-react"
 import { AnnouncementBar } from "@/components/announcement-bar"
 import { WhatsAppFloat } from "@/components/whatsapp-float"
-import type { Book } from "@/lib/books-data"
+import { getBookBySlug } from "@/lib/books-data"
 
-interface BookDetailPageClientProps {
-  book: Book
+interface BookPageProps {
+  params: {
+    slug: string
+  }
 }
 
-export default function BookDetailPageClient({ book }: BookDetailPageClientProps) {
+export default function BookDetailPageClient({ params }: BookPageProps) {
+  // Get book data directly - no need for useState/useEffect since we're using static generation
+  const book = getBookBySlug(params.slug)
+
+  if (!book) {
+    notFound()
+  }
+
   const handleBuyNow = () => {
     const message = `Hi! I'm interested in "${book.name}" for ${book.university} ${book.course} entrance exam, priced at ₹${book.price}. Please provide more details and confirm availability.`
     window.open(`https://wa.me/919914632817?text=${encodeURIComponent(message)}`, "_blank")
@@ -37,7 +47,7 @@ export default function BookDetailPageClient({ book }: BookDetailPageClientProps
   const discountPercentage = Math.round(((book.originalPrice - book.price) / book.originalPrice) * 100)
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-purple-50 to-pink-50">
       <AnnouncementBar />
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
@@ -49,27 +59,32 @@ export default function BookDetailPageClient({ book }: BookDetailPageClientProps
         <div className="grid lg:grid-cols-2 gap-12 mb-16">
           {/* Book Image */}
           <div className="space-y-4">
-            <div className="relative bg-white rounded-lg shadow-lg p-8">
+            <div className="relative bg-white/90 backdrop-blur-sm rounded-3xl shadow-2xl p-8 border border-white/20">
               <img
                 src={book.image || "/placeholder.svg?height=400&width=300"}
                 alt={book.name}
-                className="w-full max-w-lg mx-auto h-auto object-contain"
+                className="w-full max-w-lg mx-auto h-auto object-contain hover:scale-105 transition-transform duration-500"
                 style={{ minHeight: "400px" }}
               />
               {book.bestseller && (
-                <Badge className="absolute top-4 left-4 bg-red-500 hover:bg-red-600">⭐ Bestseller</Badge>
+                <Badge className="absolute top-4 left-4 bg-gradient-to-r from-red-500 via-pink-500 to-red-600 hover:from-red-600 hover:via-pink-600 hover:to-red-700 animate-pulse">
+                  ⭐ Bestseller
+                </Badge>
               )}
+              <div className="absolute inset-0 bg-gradient-to-t from-purple-100/20 to-transparent rounded-3xl pointer-events-none"></div>
             </div>
           </div>
 
           {/* Book Details */}
           <div className="space-y-6">
             <div>
-              <Badge className="mb-3 bg-blue-100 text-blue-800 hover:bg-blue-200">
+              <Badge className="mb-3 bg-gradient-to-r from-blue-100 to-purple-100 text-blue-800 hover:from-blue-200 hover:to-purple-200 border border-blue-200">
                 <GraduationCap className="h-4 w-4 mr-1" />
                 {book.course} • {book.university}
               </Badge>
-              <h1 className="text-3xl lg:text-4xl font-bold text-gray-900 mb-4">{book.name}</h1>
+              <h1 className="text-3xl lg:text-4xl font-bold bg-gradient-to-r from-gray-900 via-blue-900 to-purple-900 bg-clip-text text-transparent mb-4">
+                {book.name}
+              </h1>
               <p className="text-xl text-gray-600 mb-4">by {book.author}</p>
 
               {/* Rating */}
@@ -90,11 +105,16 @@ export default function BookDetailPageClient({ book }: BookDetailPageClientProps
             </div>
 
             {/* Pricing */}
-            <div className="bg-green-50 p-6 rounded-lg border border-green-200">
+            <div className="bg-gradient-to-r from-green-50 via-emerald-50 to-green-50 p-6 rounded-2xl border-2 border-green-200 shadow-lg">
               <div className="flex items-center space-x-4 mb-4">
-                <span className="text-3xl font-bold text-green-600">₹{book.price}</span>
+                <span className="text-3xl font-bold bg-gradient-to-r from-green-600 to-emerald-600 bg-clip-text text-transparent">
+                  ₹{book.price}
+                </span>
                 <span className="text-xl text-gray-500 line-through">₹{book.originalPrice}</span>
-                <Badge variant="secondary" className="text-sm bg-orange-100 text-orange-700">
+                <Badge
+                  variant="secondary"
+                  className="text-sm bg-gradient-to-r from-orange-100 to-red-100 text-orange-700"
+                >
                   {discountPercentage}% OFF
                 </Badge>
               </div>
@@ -102,7 +122,7 @@ export default function BookDetailPageClient({ book }: BookDetailPageClientProps
             </div>
 
             {/* Short Description */}
-            <div className="bg-white rounded-lg p-6 shadow-sm border">
+            <div className="bg-white/80 backdrop-blur-sm rounded-2xl p-6 border border-white/20 shadow-lg">
               <h3 className="text-lg font-semibold text-gray-900 mb-3 flex items-center">
                 <BookOpen className="h-5 w-5 mr-2 text-blue-600" />
                 About This Book
@@ -111,7 +131,7 @@ export default function BookDetailPageClient({ book }: BookDetailPageClientProps
             </div>
 
             {/* Key Features */}
-            <div className="bg-white rounded-lg p-6 shadow-sm border">
+            <div className="bg-white/80 backdrop-blur-sm rounded-2xl p-6 border border-white/20 shadow-lg">
               <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center">
                 <Lightbulb className="h-5 w-5 mr-2 text-purple-600" />
                 Key Features
@@ -131,7 +151,7 @@ export default function BookDetailPageClient({ book }: BookDetailPageClientProps
               <Button
                 onClick={handleBuyNow}
                 size="lg"
-                className="w-full bg-green-600 hover:bg-green-700 text-lg py-6"
+                className="w-full bg-gradient-to-r from-green-600 via-emerald-600 to-green-700 hover:from-green-700 hover:via-emerald-700 hover:to-green-800 text-lg py-6 shadow-xl hover:shadow-2xl transform hover:scale-105 transition-all duration-300"
                 disabled={!book.inStock}
               >
                 <ShoppingCart className="mr-3 h-5 w-5" />
@@ -142,7 +162,7 @@ export default function BookDetailPageClient({ book }: BookDetailPageClientProps
                 onClick={handleEnquiry}
                 variant="outline"
                 size="lg"
-                className="w-full text-lg py-6 border-2 border-blue-600 text-blue-600 hover:bg-blue-600 hover:text-white bg-transparent"
+                className="w-full text-lg py-6 bg-white/80 backdrop-blur-sm border-2 border-blue-200 hover:border-purple-300 hover:bg-white shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300"
               >
                 <Users className="mr-3 h-5 w-5" />
                 Ask Questions / Get Help
@@ -173,7 +193,7 @@ export default function BookDetailPageClient({ book }: BookDetailPageClientProps
         {/* Enhanced Content Sections */}
         <div className="space-y-8">
           {/* Detailed Description */}
-          <Card className="bg-white shadow-lg">
+          <Card className="bg-white/90 backdrop-blur-sm border-0 shadow-2xl">
             <CardContent className="p-8">
               <h2 className="text-2xl font-bold text-gray-900 mb-6 flex items-center">
                 <BookMarked className="h-6 w-6 mr-3 text-blue-600" />
@@ -186,7 +206,7 @@ export default function BookDetailPageClient({ book }: BookDetailPageClientProps
           </Card>
 
           {/* Table of Contents */}
-          <Card className="bg-white shadow-lg">
+          <Card className="bg-white/90 backdrop-blur-sm border-0 shadow-2xl">
             <CardContent className="p-8">
               <h2 className="text-2xl font-bold text-gray-900 mb-6 flex items-center">
                 <BookOpen className="h-6 w-6 mr-3 text-purple-600" />
@@ -196,7 +216,7 @@ export default function BookDetailPageClient({ book }: BookDetailPageClientProps
                 {book.tableOfContents.map((chapter, index) => (
                   <div
                     key={index}
-                    className="flex items-center space-x-3 p-3 bg-blue-50 rounded-lg border border-blue-100"
+                    className="flex items-center space-x-3 p-3 bg-gradient-to-r from-blue-50 to-purple-50 rounded-lg"
                   >
                     <div className="bg-blue-600 text-white rounded-full w-8 h-8 flex items-center justify-center text-sm font-bold">
                       {index + 1}
@@ -210,7 +230,7 @@ export default function BookDetailPageClient({ book }: BookDetailPageClientProps
 
           {/* Key Highlights & Target Audience */}
           <div className="grid lg:grid-cols-2 gap-8">
-            <Card className="bg-white shadow-lg">
+            <Card className="bg-white/90 backdrop-blur-sm border-0 shadow-2xl">
               <CardContent className="p-8">
                 <h2 className="text-2xl font-bold text-gray-900 mb-6 flex items-center">
                   <Target className="h-6 w-6 mr-3 text-green-600" />
@@ -229,7 +249,7 @@ export default function BookDetailPageClient({ book }: BookDetailPageClientProps
               </CardContent>
             </Card>
 
-            <Card className="bg-white shadow-lg">
+            <Card className="bg-white/90 backdrop-blur-sm border-0 shadow-2xl">
               <CardContent className="p-8">
                 <h2 className="text-2xl font-bold text-gray-900 mb-6 flex items-center">
                   <Users className="h-6 w-6 mr-3 text-orange-600" />
@@ -251,14 +271,14 @@ export default function BookDetailPageClient({ book }: BookDetailPageClientProps
 
           {/* Exam Pattern & Syllabus Coverage */}
           <div className="grid lg:grid-cols-2 gap-8">
-            <Card className="bg-blue-50 border-blue-200 shadow-lg">
+            <Card className="bg-gradient-to-br from-blue-50 to-purple-50 border-2 border-blue-200 shadow-2xl">
               <CardContent className="p-8">
                 <h2 className="text-2xl font-bold text-blue-900 mb-4">📋 Exam Pattern</h2>
                 <p className="text-gray-700 leading-relaxed">{book.examPattern}</p>
               </CardContent>
             </Card>
 
-            <Card className="bg-green-50 border-green-200 shadow-lg">
+            <Card className="bg-gradient-to-br from-green-50 to-emerald-50 border-2 border-green-200 shadow-2xl">
               <CardContent className="p-8">
                 <h2 className="text-2xl font-bold text-green-900 mb-4">📚 Syllabus Coverage</h2>
                 <p className="text-gray-700 leading-relaxed">{book.syllabusCoverage}</p>
@@ -267,7 +287,7 @@ export default function BookDetailPageClient({ book }: BookDetailPageClientProps
           </div>
 
           {/* Specifications */}
-          <Card className="bg-white shadow-lg">
+          <Card className="bg-white/90 backdrop-blur-sm border-0 shadow-2xl">
             <CardContent className="p-8">
               <h2 className="text-2xl font-bold text-gray-900 mb-6">Book Specifications</h2>
               <div className="grid md:grid-cols-2 gap-8">
@@ -314,7 +334,7 @@ export default function BookDetailPageClient({ book }: BookDetailPageClientProps
           </Card>
 
           {/* Call to Action */}
-          <Card className="bg-blue-600 text-white shadow-lg">
+          <Card className="bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 text-white border-0 shadow-2xl">
             <CardContent className="p-8 text-center">
               <h2 className="text-2xl font-bold mb-4">Ready to Start Your Preparation?</h2>
               <p className="text-blue-100 mb-6 max-w-2xl mx-auto text-lg">
@@ -325,7 +345,7 @@ export default function BookDetailPageClient({ book }: BookDetailPageClientProps
                 <Button
                   onClick={handleBuyNow}
                   size="lg"
-                  className="bg-white text-blue-600 hover:bg-gray-100"
+                  className="bg-white text-blue-600 hover:bg-blue-50 shadow-xl hover:shadow-2xl transform hover:scale-105 transition-all duration-300"
                   disabled={!book.inStock}
                 >
                   <ShoppingCart className="mr-2 h-5 w-5" />
@@ -335,7 +355,7 @@ export default function BookDetailPageClient({ book }: BookDetailPageClientProps
                   onClick={handleEnquiry}
                   variant="outline"
                   size="lg"
-                  className="border-2 border-white text-white hover:bg-white hover:text-blue-600 bg-transparent"
+                  className="bg-transparent border-2 border-white text-white hover:bg-white hover:text-blue-600 shadow-xl hover:shadow-2xl transform hover:scale-105 transition-all duration-300"
                 >
                   <Users className="mr-2 h-5 w-5" />
                   Need Help? Contact Us
